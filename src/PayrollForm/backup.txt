@@ -1,0 +1,78 @@
+ id={data.id}
+                        employeeName={data.empName}
+                        employeeCode={data.empCode}
+                        department={data.department}
+                        designation={data.designation}
+                        paidDays={data.paidDays}
+                        lop={data.lop}
+                        uanNumber={data.uanNumber}
+                        aadharNumber={data.aadharNumber}
+                        address={data.address}
+                        month={data.month}
+                        accountNumber={data.accountNumber}
+                        hra={data.hra}
+                        basic={data.basic}
+                        conveyanceAllowance={data.conveyanceAllowance}
+                        specialAllowance={data.specialAllowance}
+                        bonus={data.bonus}
+                        pfAmount={data.pfAmount}
+                        esi={data.esi}
+                        professionalTax={data.professionalTax}
+                        key={data.id}
+
+
+{arrayOfObject.length > 0 && arrayOfObject.map(data => {
+                return (
+                    <EmployeeTable/>
+                )
+            })}
+
+
+            {arrayOfObject.length > 0 && arrayOfObject.map(data => {
+                return (
+                    <EmployeeTable
+                        id={data.id}
+                        employeeName={data.empName}
+                        employeeCode={data.empCode}
+                        department={data.department}
+                        designation={data.designation}
+                        paidDays={data.paidDays}
+                        lop={data.lop}
+                        uanNumber={data.uanNumber}
+                        aadharNumber={data.aadharNumber}
+                        address={data.address}
+                        month={data.month}
+                        accountNumber={data.accountNumber}
+                        hra={data.hra}
+                        basic={data.basic}
+                        conveyanceAllowance={data.conveyanceAllowance}
+                        specialAllowance={data.specialAllowance}
+                        bonus={data.bonus}
+                        pfAmount={data.pfAmount}
+                        esi={data.esi}
+                        professionalTax={data.professionalTax}
+                        key={data.id}
+                    />
+                )
+            })}
+
+            const { id, employeeName, employeeCode, department,
+        designation, paidDays, lop, uanNumber,
+        aadharNumber, address, month, accountNumber,
+        hra, basic, conveyanceAllowance, specialAllowance,
+        bonus, pfAmount, esi, professionalTax } = props;
+
+        const { employeeName, employeeCode, address, aadharNumber, month,
+        department, pfNumber, paidDays, lop, uanNumber, designation,
+        accountNumber, hra, basic, conveyanceAllowance, specialAllowance,
+        bonus, pfAmount, esi, professionalTax } = props;
+
+        <Space direction="vertical">
+                            <DatePicker
+                                format="MM/YYYY"
+                                picker="month"
+                                onChange={handleBasicData}
+                                defaultValue={moment(basicData.month, "MM/YYYY")}
+                                placeholder="month"
+                            />
+                        </Space>
