@@ -76,3 +76,55 @@
                                 placeholder="month"
                             />
                         </Space>
+
+Month input
+const isMozillaFirefox = typeof InstallTrigger !== 'undefined';
+    const isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })
+        (!window['safari'] || (typeof safari !== 'undefined' && window['safari'].pushNotification));
+    
+    validate function inside:
+
+    let monthError = "";
+
+    case (basicData.month === ""):
+                const monthInput = document.querySelector("input[name = month]");
+                monthInput.focus();
+                monthError = "Month should not be empty";
+                break;
+
+
+    default case:
+    setErrors({
+     monthError: "",
+    })
+
+    if(monthError);
+
+    setErrors({
+        monthError: monthError,
+    })
+
+
+    <div className="form-row">
+                    <label>Month </label>
+                    <div className="col-6">
+                        {/*{(!isMozillaFirefox && !isSafari) && <input type="month" className="form-control" onChange={handleBasicData}
+                            name="month" value={basicData.month} placeholder="month"></input>}
+                        {(isMozillaFirefox || isSafari) && <input type="date" name="month" className="form-control"
+    onChange={handleBasicData} value={basicData.month} placeholder="month"></input>}*/}
+                        <Space direction="vertical">
+                            <DatePicker
+                                format="MM/YYYY"
+                                picker="month"
+                                onChange={(date, dateString) => handleDate(date, dateString)}
+                                //defaultValue={moment(basicData.month ? basicData.month : "01/2020", "MM/YYYY")}
+                                defaultValue={moment("01/2020", "MM/YYYY")}
+                                placeholder="month"
+                                name="month"
+                                data-testid = "date-picker"
+                            />
+                        </Space>
+                        {errors.monthError && <span>{errors.monthError}</span>}
+                    </div>
+                </div>
+

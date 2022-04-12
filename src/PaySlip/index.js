@@ -13,7 +13,6 @@ const PaySlip = (props) => {
     const [shortMonth] = useState(new Date(month).toLocaleString("en", { month: "short"}))
     const [fullYear] = useState(new Date(month).getFullYear());
 
-    console.log();
     const printHandler = useReactToPrint({
         content: () => componentRef.current
     });

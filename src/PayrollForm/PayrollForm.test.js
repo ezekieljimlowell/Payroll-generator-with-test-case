@@ -6,6 +6,7 @@ import ReactDOM from "react-dom";
 import PayrollForm from "./index";
 import EmployeeTable from "../EmployeeTable/EmployeeTable";
 import PaySlip from "../PaySlip";
+import moment from 'moment';
 
 let container;
 
@@ -50,11 +51,13 @@ describe("testing for display value", () => {
         expect(aaharNumberInput).toHaveDisplayValue(/879012345432/i);
 
         //month
-        const monthInput = screen.getByPlaceholderText(/month/i);
-        userEvent.click(monthInput);
-        userEvent.type(monthInput, "February 2022");
-        userEvent.click(monthInput);
-        expect(monthInput).toHaveDisplayValue(/February 2022/i);
+        const monthInput = screen.getByTestId("date-picker");
+        screen.debug(monthInput);
+        fireEvent.click(monthInput);
+        fireEvent.change(monthInput, { target: { value: "01-1999" }});
+        //fireEvent.click(document.querySelectorAll(".ant-picker-cell-selected")[0]);
+        screen.debug(monthInput);
+        expect(monthInput).toHaveDisplayValue(/[Tue Dec 01 2020 00:00:00 GMT+0530]/i);
 
         //Department
         const departmentInput = screen.getByPlaceholderText(/Department/i);
@@ -134,13 +137,85 @@ describe("testing for display value", () => {
         //Generate pay slip
         const generateButton = screen.getByRole("button", { name: /Generate/i });
         //fireEvent.submit(generateButton);
-        fireEvent.click(generateButton);
-        screen.debug(generateButton);
+        userEvent.click(generateButton);
         //expect(submitHandler).toHaveBeenCalled();
 
-        const displayedEmployeeName = screen.queryAllByText(/Kalidas/i)[0];
-        // screen.debug();
-        expect(displayedEmployeeName).toBeInTheDocument();
+        //const duplicateErrorCode = screen.getByText("")
+
+
+        //CHECK DISPLAY OF CONTENT IN EMPLOYEE TABLE AND PAYSLIP
+        const displayedEmployeeNameTable = screen.queryAllByText(/Kalidas/i)[0];
+        expect(displayedEmployeeNameTable).toBeInTheDocument();
+        const displayedEmployeeNameSlip = screen.getByText(/Employee name: Kalidas/i);
+        expect(displayedEmployeeNameSlip).toBeInTheDocument();
+
+        const displayedEmpCodeTable = screen.getAllByText(/R234RE/i)[0];
+        expect(displayedEmpCodeTable).toBeInTheDocument();
+        const displayedEmpCodeSlip = screen.getByText(/Employee code: R234RE/i);
+        expect(displayedEmpCodeSlip).toBeInTheDocument();
+
+        const displayedDepartmentTable = screen.getAllByText(/Electrical/i)[0];
+        const displayedDepartmentSlip = screen.getAllByText(/Electrical/i)[1];
+        expect(displayedDepartmentSlip).toBeInTheDocument();
+        expect(displayedDepartmentTable).toBeInTheDocument();
+
+        const displayedDesigantionTable = screen.getAllByText(/Consultant/i)[0];
+        const displayedDesigantionSlip = screen.getByText(/Designation: Consultant/i);
+        expect(displayedDesigantionTable).toBeInTheDocument();
+        expect(displayedDesigantionSlip).toBeInTheDocument();
+
+        const paidDaysTable = screen.getAllByText(/30/i)[0];
+        const paidDaysSlip = screen.getByText(/Paid days: 30/i);
+        expect(paidDaysTable).toBeInTheDocument();
+        expect(paidDaysSlip).toBeInTheDocument();
+
+        const lopTable = screen.getAllByText(/1/i)[0];
+        const lopSlip = screen.getByText(/Loss of Pay: 1/i);
+        expect(lopTable).toBeInTheDocument();
+        expect(lopSlip).toBeInTheDocument();
+
+        const uanTable = screen.getAllByText(/999996789012/i)[0];
+        const uanSlip = screen.getByText(/UAN: 999996789012/i);
+        expect(uanTable).toBeInTheDocument();
+        expect(uanSlip).toBeInTheDocument();
+
+        const aadharTable = screen.getAllByText(/879012345432/i)[0];
+        const aadharSlip = screen.getByText(/Aadhar number: 879012345432/i);
+        expect(aadharTable).toBeInTheDocument();
+        expect(aadharSlip).toBeInTheDocument();
+
+        const addressSlip = screen.getByText(/Employee address: No: 783, mkr street, rajakilpskkam, chennai - 34/i);
+        expect(addressSlip).toBeInTheDocument();
+
+        const pfNumberSlip = screen.getByText(/PF number: Tn-1332m4ksudvs00ews99/i);
+        expect(pfNumberSlip).toBeInTheDocument();
+
+        const accountSlip = screen.getByText(/Bank account number: 123456789876/i);
+        expect(accountSlip).toBeInTheDocument();
+
+        const showButton = screen.getAllByRole("button", {name: /Show/i})[0];
+        expect(showButton).toBeInTheDocument();
+        const hideButton = screen.getAllByRole("button", {name: /Hide/i})[0];
+        expect(hideButton).toBeInTheDocument();
+        const printButton = screen.getByRole("button", { name: /Print/i});
+        expect(printButton).toBeInTheDocument();
+
+        const companyAddress = screen.getByText(/No: 7, Kaliamman kovil street, Rathnapuri, Chennai-600107/i);
+        expect(companyAddress).toBeInTheDocument();
+
+        const paySlipMonth = screen.queryByText(/Payslip for the month: /i);
+        screen.debug(paySlipMonth);
+
+        employeeCodeInput.setSelectionRange(0, 6);
+        userEvent.type(employeeCodeInput, "{backspace}R234RE");
+        userEvent.click(generateButton);
+        const duplicateErrorEmpCode = screen.getByText(/Duplicate Employee code is not allowed/i);
+        expect(duplicateErrorEmpCode).toBeInTheDocument();
+        employeeCodeInput.setSelectionRange(0,6);
+        userEvent.type(employeeCodeInput, "{backspace}");
+        userEvent.click(generateButton);
+        const emptyEmpCodeError = screen.getByText(/Employee code should not be empty/i);
+        expect(emptyEmpCodeError).toBeInTheDocument();
 
     })
 })

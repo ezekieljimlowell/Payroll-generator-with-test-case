@@ -31,12 +31,15 @@ const PayrollForm = () => {
         professionalTax: ""
     });
 
+    const [showDate, setDate] = useState(false);
+    const [dateValue, setDateValue] = useState("");
+
     const [errors, setErrors] = useState({
         employeeNameError: "",
         employeeCodeError: "",
         addressError: "",
         aadharNumberError: "",
-        monthError: "",
+        //monthError: "",
         departmentError: "",
         pfNumberError: "",
         paidDaysError: "",
@@ -70,12 +73,21 @@ const PayrollForm = () => {
         //console.log(oldData);
     }, [])
 
+    const handleDate = (event, value, displayStrings) => {
+        setBasicData({
+            ...basicData,
+            month: value
+        })
+        setDateValue(value);
+        console.log(value) ;
+    }
+
     const validateInputs = () => {
         let employeeNameError = "";
         let employeeCodeError = "";
         let addressError = "";
         let aadharNumberError = "";
-        let monthError = "";
+        //let monthError = "";
         let departmentError = "";
         let pfNumberError = "";
         let paidDaysError = "";
@@ -114,11 +126,11 @@ const PayrollForm = () => {
                 aadharInput.focus();
                 aadharNumberError = (basicData.aadharNumber === "" ? "Aadhar number should not be empty" : "Please give exactly 12 digit");
                 break;
-            case (basicData.month === ""):
+            /*case (basicData.month === ""):
                 const monthInput = document.querySelector("input[name = month]");
                 monthInput.focus();
                 monthError = "Month should not be empty";
-                break;
+                break;*/
             case (basicData.department === "" || !/^[A-Z-a-z ]*$/.test(basicData.department)):
                 const departmentInput = document.querySelector("input[name = department]");
                 departmentInput.focus();
@@ -200,7 +212,7 @@ const PayrollForm = () => {
                     employeeCodeError: "",
                     addressError: "",
                     aadharNumberError: "",
-                    monthError: "",
+                    //monthError: "",
                     departmentError: "",
                     pfNumberError: "",
                     paidDaysError: "",
@@ -221,7 +233,7 @@ const PayrollForm = () => {
 
         }
         if (employeeNameError || employeeCodeError || addressError ||
-            aadharNumberError || monthError || departmentError || pfNumberError ||
+            aadharNumberError || departmentError || pfNumberError ||
             paidDaysError || lopError || uanNumberError || designationError ||
             accountNumberError || hraError || basicError || conveyanceAllowanceError ||
             specialAllowanceError || bonusError || pfAmountError || esiError ||
@@ -231,7 +243,7 @@ const PayrollForm = () => {
                 employeeCodeError: employeeCodeError,
                 addressError: addressError,
                 aadharNumberError: aadharNumberError,
-                monthError: monthError,
+                //monthError: monthError,
                 departmentError: departmentError,
                 pfNumberError: pfNumberError,
                 paidDaysError: paidDaysError,
@@ -264,7 +276,7 @@ const PayrollForm = () => {
         switch (true) {
             case (duplicateEmployeeCode):
                 //setDuplicate({ duplicateEmployeeCode: true });
-                setErrors({ employeeCodeError: "Duplicate values are not allowed" });
+                setErrors({ employeeCodeError: "Duplicate Employee code is not allowed" });
                 const codeInput = document.querySelector(`input[name = employeeCode]`);
                 codeInput.focus();
                 break;
@@ -306,13 +318,6 @@ const PayrollForm = () => {
         return true;
     }
 
-    const handleDate = (value) => {
-        setBasicData({
-            ...basicData,
-            month: value ? value : "01/2020"
-        })
-    }
-
     const handleBasicData = (event) => {
         const value = event.target.value;
         setBasicData({
@@ -322,8 +327,8 @@ const PayrollForm = () => {
 
         //console.log(basicData.month);
 
-        if (basicData.employeeName !== "" || basicData.employeeCode !== "" || basicData.address !== "" || basicData.aadharNumber !== "" ||
-            basicData.month !== "" || basicData.department !== "" || basicData.pfNumber !== "" || basicData.paidDays !== "" ||
+        if (basicData.employeeName !== "" || basicData.employeeCode !== "" || basicData.address !== "" || basicData.aadharNumber !== "" || 
+            basicData.department !== "" || basicData.pfNumber !== "" || basicData.paidDays !== "" ||
             basicData.lop !== "" || basicData.uanNumber !== "" || basicData.designation !== "" || basicData.accountNumber !== "" ||
             basicData.hra !== "" || basicData.basic !== "" || basicData.conveyanceAllowance !== "" || basicData.specialAllowance !== "" ||
             basicData.bonus !== "" || basicData.pfAmount !== "" || basicData.esi !== "" || basicData.professionalTax !== ""
@@ -333,7 +338,7 @@ const PayrollForm = () => {
                 employeeCodeError: "",
                 addressError: "",
                 aadharNumberError: "",
-                monthError: "",
+                //monthError: "",
                 departmentError: "",
                 pfNumberError: "",
                 paidDaysError: "",
@@ -356,8 +361,8 @@ const PayrollForm = () => {
 
     const generatePaySlip = (event) => {
         //event.preventDefault();
-        console.log("outer");
-        if (duplicateValidation() && validateInputs()) {
+        //console.log(errors, basicData, validateInputs(), employeeData);
+        if ( validateInputs() && duplicateValidation()) {
             console.log("clicked");
             setPaySlip(true);
             const employeeObject = {
@@ -393,28 +398,6 @@ const PayrollForm = () => {
                 let arrayOfObject = JSON.parse(localStorage.getItem("empRow") || "[]");
                 setEmployeeData(arrayOfObject);
                 //console.log("check");
-                setBasicData({
-                    employeeName: "",
-                    employeeCode: "",
-                    address: "",
-                    aadharNumber: "",
-                    month: "",
-                    department: "",
-                    pfNumber: "",
-                    paidDays: "",
-                    lop: "",
-                    uanNumber: "",
-                    designation: "",
-                    accountNumber: "",
-                    hra: "",
-                    basic: "",
-                    conveyanceAllowance: "",
-                    specialAllowance: "",
-                    bonus: "",
-                    pfAmount: "",
-                    esi: "",
-                    professionalTax: ""
-                })
             }
             else {
                 //localStorageArray.push(...oldData, employeeObject)
@@ -426,32 +409,11 @@ const PayrollForm = () => {
                 setEmployeeData(arrayOfObject);
                 setOldData("");
                 //console.log("passed");
-                setBasicData({
-                    employeeName: "",
-                    employeeCode: "",
-                    address: "",
-                    aadharNumber: "",
-                    month: "",
-                    department: "",
-                    pfNumber: "",
-                    paidDays: "",
-                    lop: "",
-                    uanNumber: "",
-                    designation: "",
-                    accountNumber: "",
-                    hra: "",
-                    basic: "",
-                    conveyanceAllowance: "",
-                    specialAllowance: "",
-                    bonus: "",
-                    pfAmount: "",
-                    esi: "",
-                    professionalTax: ""
-                })
             }
         }
     }
 
+    //console.log(basicData.month);
     const props = {
         ...basicData
         //...salaryData
@@ -505,11 +467,13 @@ const PayrollForm = () => {
                             <DatePicker
                                 format="MM/YYYY"
                                 picker="month"
-                                onChange={handleDate}
-                                defaultValue={moment(basicData.month ? basicData.month : "01/2020", "MM/YYYY")}
-                                //defaultValue={moment(basicData.month, "MM/YYYY")}
+                                onChange={(date, dateString) => handleDate(date, dateString)}
+                                //defaultValue={moment(basicData.month ? basicData.month : "01/2020", "MM/YYYY")}
+                                //defaultValue={moment("01/2020", "MM/YYYY")}
+                                value={dateValue ? dateValue: null}
                                 placeholder="month"
                                 name="month"
+                                data-testid = "date-picker"
                             />
                         </Space>
                         {errors.monthError && <span>{errors.monthError}</span>}
@@ -649,6 +613,11 @@ const PayrollForm = () => {
             <div>
                 {showPaySlip && <PaySlip {...props} />}
             </div>
+            <button onClick={() => {
+                            setDate(true);
+                            console.log(basicData.month);
+                            }}>Display date</button>
+                        {/*{showDate && <h1>{basicData.month}</h1>}*/}
         </div>
     )
 }
