@@ -7,11 +7,11 @@ const PaySlip = (props) => {
     const { employeeName, employeeCode, address, aadharNumber, month,
         department, pfNumber, paidDays, lop, uanNumber, designation,
         accountNumber, hra, basic, conveyanceAllowance, specialAllowance,
-        bonus, pfAmount, esi, professionalTax } = props;
+        bonus, pfAmount, esi, professionalTax, dateValue } = props;
     const componentRef = useRef();
 
-    const [shortMonth] = useState(new Date(month).toLocaleString("en", { month: "short"}))
-    const [fullYear] = useState(new Date(month).getFullYear());
+    const [shortMonth] = useState(new Date(dateValue).toLocaleString("en", { month: "short"}))
+    const [fullYear] = useState(new Date(dateValue).getFullYear());
 
     const printHandler = useReactToPrint({
         content: () => componentRef.current

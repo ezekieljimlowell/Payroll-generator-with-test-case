@@ -73,13 +73,12 @@ const PayrollForm = () => {
         //console.log(oldData);
     }, [])
 
-    const handleDate = (event, value, displayStrings) => {
-        setBasicData({
+    const handleDate = (value, displayStrings) => {
+        /*setBasicData({
             ...basicData,
-            month: value
-        })
-        setDateValue(value);
-        console.log(value) ;
+            month: moment(value, "MM/YYYY")
+        })*/
+        setDateValue(moment(value, "MM/YYYY"));
     }
 
     const validateInputs = () => {
@@ -281,6 +280,7 @@ const PayrollForm = () => {
                 codeInput.focus();
                 break;
             case (duplicateAddress):
+                console.log("Duplicate");
                 //setDuplicate({ duplicateAddress: true });
                 setErrors({ addressError: "Please does not provide duplicate address" });
                 const addressInput = document.querySelector("input[name = address]");
@@ -327,7 +327,7 @@ const PayrollForm = () => {
 
         //console.log(basicData.month);
 
-        if (basicData.employeeName !== "" || basicData.employeeCode !== "" || basicData.address !== "" || basicData.aadharNumber !== "" || 
+        if (basicData.employeeName !== "" || basicData.employeeCode !== "" || basicData.address !== "" || basicData.aadharNumber !== "" ||
             basicData.department !== "" || basicData.pfNumber !== "" || basicData.paidDays !== "" ||
             basicData.lop !== "" || basicData.uanNumber !== "" || basicData.designation !== "" || basicData.accountNumber !== "" ||
             basicData.hra !== "" || basicData.basic !== "" || basicData.conveyanceAllowance !== "" || basicData.specialAllowance !== "" ||
@@ -362,7 +362,7 @@ const PayrollForm = () => {
     const generatePaySlip = (event) => {
         //event.preventDefault();
         //console.log(errors, basicData, validateInputs(), employeeData);
-        if ( validateInputs() && duplicateValidation()) {
+        if (duplicateValidation() && validateInputs()) {
             console.log("clicked");
             setPaySlip(true);
             const employeeObject = {
@@ -415,7 +415,8 @@ const PayrollForm = () => {
 
     //console.log(basicData.month);
     const props = {
-        ...basicData
+        ...basicData,
+        dateValue
         //...salaryData
     }
 
@@ -470,10 +471,10 @@ const PayrollForm = () => {
                                 onChange={(date, dateString) => handleDate(date, dateString)}
                                 //defaultValue={moment(basicData.month ? basicData.month : "01/2020", "MM/YYYY")}
                                 //defaultValue={moment("01/2020", "MM/YYYY")}
-                                value={dateValue ? dateValue: null}
+                                value={dateValue ? dateValue : null}
                                 placeholder="month"
                                 name="month"
-                                data-testid = "date-picker"
+                                data-testid="date-picker"
                             />
                         </Space>
                         {errors.monthError && <span>{errors.monthError}</span>}
@@ -614,10 +615,10 @@ const PayrollForm = () => {
                 {showPaySlip && <PaySlip {...props} />}
             </div>
             <button onClick={() => {
-                            setDate(true);
-                            console.log(basicData.month);
-                            }}>Display date</button>
-                        {/*{showDate && <h1>{basicData.month}</h1>}*/}
+                setDate(true);
+                console.log(basicData.month);
+            }}>Display date</button>
+            {/*{showDate && <h1>{basicData.month}</h1>}*/}
         </div>
     )
 }

@@ -1,5 +1,5 @@
 import { act } from "react-dom/test-utils";
-import { screen, fireEvent, render } from "@testing-library/react";
+import { screen, fireEvent, render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 //import ReactDOM from "react-dom/client";
 import ReactDOM from "react-dom";
@@ -21,7 +21,7 @@ describe("testing for display value", () => {
         container = null;
     })
 
-    it("Display value of all the data", async () => {
+    it("Display value of all the data and testing for duplicate values", async () => {
         /*act(() => {
             ReactDOM.createRoot(container).render(<>
                 <PayrollForm submitHandler={submitHandler}/>
@@ -52,12 +52,12 @@ describe("testing for display value", () => {
 
         //month
         const monthInput = screen.getByTestId("date-picker");
-        screen.debug(monthInput);
         fireEvent.click(monthInput);
-        fireEvent.change(monthInput, { target: { value: "01-1999" }});
+        await waitFor(() => fireEvent.change(monthInput, { target: { value: "01-1999" } }));
+        //fireEvent.click(monthInput);
         //fireEvent.click(document.querySelectorAll(".ant-picker-cell-selected")[0]);
         screen.debug(monthInput);
-        expect(monthInput).toHaveDisplayValue(/[Tue Dec 01 2020 00:00:00 GMT+0530]/i);
+        expect(monthInput).toHaveDisplayValue(/["01-1999"]/i);
 
         //Department
         const departmentInput = screen.getByPlaceholderText(/Department/i);
@@ -193,29 +193,102 @@ describe("testing for display value", () => {
         const accountSlip = screen.getByText(/Bank account number: 123456789876/i);
         expect(accountSlip).toBeInTheDocument();
 
-        const showButton = screen.getAllByRole("button", {name: /Show/i})[0];
+        const showButton = screen.getAllByRole("button", { name: /Show/i })[0];
         expect(showButton).toBeInTheDocument();
-        const hideButton = screen.getAllByRole("button", {name: /Hide/i})[0];
+        const hideButton = screen.getAllByRole("button", { name: /Hide/i })[0];
         expect(hideButton).toBeInTheDocument();
-        const printButton = screen.getByRole("button", { name: /Print/i});
+        const printButton = screen.getByRole("button", { name: /Print/i });
         expect(printButton).toBeInTheDocument();
 
         const companyAddress = screen.getByText(/No: 7, Kaliamman kovil street, Rathnapuri, Chennai-600107/i);
         expect(companyAddress).toBeInTheDocument();
 
-        const paySlipMonth = screen.queryByText(/Payslip for the month: /i);
-        screen.debug(paySlipMonth);
-
-        employeeCodeInput.setSelectionRange(0, 6);
-        userEvent.type(employeeCodeInput, "{backspace}R234RE");
+        /*Duplicate validations for empCode, address, aadhar, pan number, uan number, account number*/
+        //employeeCodeInput.setSelectionRange(0, 6);
+        //userEvent.type(employeeCodeInput, "{backspace}R234RE");
         userEvent.click(generateButton);
         const duplicateErrorEmpCode = screen.getByText(/Duplicate Employee code is not allowed/i);
         expect(duplicateErrorEmpCode).toBeInTheDocument();
-        employeeCodeInput.setSelectionRange(0,6);
-        userEvent.type(employeeCodeInput, "{backspace}");
+        employeeCodeInput.setSelectionRange(0, 6);
+        // userEvent.type(employeeCodeInput, "{backspace}");
+        // userEvent.click(generateButton);
+        // const emptyEmpCodeError = screen.getByText(/Employee code should not be empty/i);
+        // expect(emptyEmpCodeError).toBeInTheDocument();
+        userEvent.type(employeeCodeInput, "TV4345W");
+
         userEvent.click(generateButton);
-        const emptyEmpCodeError = screen.getByText(/Employee code should not be empty/i);
-        expect(emptyEmpCodeError).toBeInTheDocument();
+        const duplicateAddress = screen.getByText(/Please does not provide duplicate address/i);
+        expect(duplicateAddress).toBeInTheDocument();
+        userEvent.type(employeeAddressInput, "No: 456, rahman street, chennai-100");
+
+        userEvent.click(generateButton);
+        const duplicateAadhar = screen.getByText(/Given aadhar number already present/i);
+        expect(duplicateAadhar).toBeInTheDocument();
+        userEvent.type(aaharNumberInput, "900045673214");
+
+        userEvent.click(generateButton);
+        const duplicatePfNumber = screen.getByText(/Duplicate PF number not allowed/i);
+        expect(duplicatePfNumber).toBeInTheDocument();
+        userEvent.type(pfNumberInput, "TN-qwer123sadfgrewsasd");
+
+        userEvent.click(generateButton);
+        const duplicateUanNumber = screen.getByText(/Duplicate values are not allowed/i);
+        expect(duplicateUanNumber).toBeInTheDocument();
+        userEvent.type(uanInput, "9032544578");
+
+        userEvent.click(generateButton);
+        const duplicateAccountNumber = screen.getByText(/Duplicate account number not allowed/i);
+        expect(duplicateAccountNumber).toBeInTheDocument();
+        userEvent.type(accountInput, "12342");
+
+        const resetButton = screen.getByRole("button", { name: /Reset/i });
+        userEvent.click(resetButton);
+        const sampleAddress = screen.queryByText(/Employee address: No: 783, mkr street, rajakilpskkam, chennai - 34/);
+        expect(sampleAddress).not.toBeInTheDocument();
+
+
+    })
+})
+
+describe("empty values and other validation errors", () => {
+    beforeEach(() => {
+        container = document.createElement("div");
+        document.body.appendChild(container);
+    })
+
+    afterEach(() => {
+        document.body.removeChild(container);
+        container = null;
+    })
+
+    it("testing for empty values and other validation errors", () => {
+        ReactDOM.render(<PayrollForm />, container);
+
+        //employee name empty and check for alphabets
+        const employeeNameInput = screen.getByPlaceholderText("Employee name");
+        const generateButton = screen.getByRole("button", { name: /Generate/i});
+        userEvent.click(generateButton);
+        const emptyNameError = screen.getByText(/Employee name should not be empty/i);
+        expect(emptyNameError).toBeInTheDocument();
+        userEvent.type(employeeNameInput, "12345");
+        userEvent.click(generateButton);
+        const empNameNumberError = screen.getByText(/Please give only alphabets/i);
+        expect(empNameNumberError).toBeInTheDocument();
+        employeeNameInput.setSelectionRange(0,6);
+        userEvent.type(employeeNameInput, "{backspace}"); 
+        userEvent.type(employeeNameInput, "Matilda");
+
+        const employeeCodeInput = screen.getByPlaceholderText(/Employee code/i);
+        userEvent.type(employeeCodeInput, "e34563d");
+
+        const addressInput = screen.getByPlaceholderText(/Employee address/i);
+        userEvent.type(addressInput, "No: 32, nnm nagar, chennai - 34");
+
+        const aadharInput = screen.getByPlaceholderText(/Aadhar number/i);
+        userEvent.type(aadharInput, "abcdscd");
+        userEvent.click(generateButton);
+        const aadharAlphabeticalError = screen.getByText(/Please give exactly 12 digit/i);
+        expect(aadharAlphabeticalError).toBeInTheDocument();
 
     })
 })
